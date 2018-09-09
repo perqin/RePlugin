@@ -17,6 +17,7 @@
 package com.qihoo360.replugin.gradle.host.creator.impl.json
 
 import com.qihoo360.replugin.gradle.host.AppConstant
+import com.qihoo360.replugin.gradle.host.Replugin
 import com.qihoo360.replugin.gradle.host.creator.IFileCreator
 import groovy.io.FileType
 import groovy.json.JsonOutput
@@ -36,7 +37,7 @@ public class PluginBuiltinJsonCreator implements IFileCreator {
         this.config = cfg
         this.variant = variant
         //make sure processResources Task execute after mergeAssets Task
-        String mergeAssetsTaskName = variant.getVariantData().getScope().getMergeAssetsTask().name
+        String mergeAssetsTaskName = Replugin.getScopeMergeAssetsTaskName(variant.variantData.scope)
         //get real gradle task
         def mergeAssetsTask = project.tasks.getByName(mergeAssetsTaskName)
         fileDir = mergeAssetsTask.outputDir

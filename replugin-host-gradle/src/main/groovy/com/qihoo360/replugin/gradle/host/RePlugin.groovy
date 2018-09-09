@@ -72,7 +72,7 @@ public class Replugin implements Plugin<Project> {
                 generateHostConfigTask.group = AppConstant.TASKS_GROUP
 
                 //depends on build config task
-                String generateBuildConfigTaskName = variant.getVariantData().getScope().getGenerateBuildConfigTask().name
+                String generateBuildConfigTaskName = getScopeGenerateBuildConfigTaskName(scope)
                 def generateBuildConfigTask = project.tasks.getByName(generateBuildConfigTaskName)
                 if (generateBuildConfigTask) {
                     generateHostConfigTask.dependsOn generateBuildConfigTask
@@ -89,7 +89,7 @@ public class Replugin implements Plugin<Project> {
                 generateBuiltinJsonTask.group = AppConstant.TASKS_GROUP
 
                 //depends on mergeAssets Task
-                String mergeAssetsTaskName = variant.getVariantData().getScope().getMergeAssetsTask().name
+                String mergeAssetsTaskName = getScopeMergeAssetsTaskName(scope)
                 def mergeAssetsTask = project.tasks.getByName(mergeAssetsTaskName)
                 if (mergeAssetsTask) {
                     generateBuiltinJsonTask.dependsOn mergeAssetsTask
@@ -152,7 +152,7 @@ public class Replugin implements Plugin<Project> {
         showPluginsTask.group = AppConstant.TASKS_GROUP
 
         //get mergeAssetsTask name
-        String mergeAssetsTaskName = variant.getVariantData().getScope().getMergeAssetsTask().name
+        String mergeAssetsTaskName = getScopeMergeAssetsTaskName(scope)
         //get real gradle task
         def mergeAssetsTask = project.tasks.getByName(mergeAssetsTaskName)
 
@@ -161,6 +161,20 @@ public class Replugin implements Plugin<Project> {
             showPluginsTask.dependsOn mergeAssetsTask
         }
 
+    }
+
+    /**
+     * 获取mergeAssets任务的名称。在较新的预览版Android Gradle插件（已知包括3.3.0-alpha08）中，scope的mergeAssetsTask属性被重构到taskContainer中。
+     */
+    static String getScopeMergeAssetsTaskName(def scope) {
+        return scope.properties.containsKey('taskContainer') ? scope.taskContainer.mergeAssetsTask.name : scope.mergeAssetsTask.name
+    }
+
+    /**
+     * 获取mergeAssets任务的名称。在较新的预览版Android Gradle插件（已知包括3.3.0-alpha08）中，scope的generateBuildConfigTask属性被重构到taskContainer中。
+     */
+    static String getScopeGenerateBuildConfigTaskName(def scope) {
+        return scope.properties.containsKey('taskContainer') ? scope.taskContainer.generateBuildConfigTask.name : scope.generateBuildConfigTask.name
     }
 
     /**
