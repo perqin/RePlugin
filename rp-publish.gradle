@@ -124,34 +124,62 @@ tasks.withType(JavaCompile) {
 
 apply plugin: 'com.jfrog.bintray'
 if (isAndroid()) {
-    apply plugin: 'com.github.dcendents.android-maven'
-}
+    apply plugin: 'maven-publish'
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                groupId group
+                artifactId pbArtifactId
+                version version
 
-install {
-    repositories.mavenInstaller {
-        pom {
-            project {
-                packaging 'aar'
-                name pbArtifactId
-                url pbSiteUrl
-                licenses {
-                    license {
-                        name pbLicense
-                        url pbLicenseUrl
+                project.afterEvaluate {
+                    artifact bundleReleaseAar
+                }
+                artifact sourcesJar
+                // artifact javadocJar
+
+                versionMapping {
+                    usage('java-api') {
+                        fromResolutionOf('runtimeClasspath')
+                    }
+                    usage('java-runtime') {
+                        fromResolutionResult()
                     }
                 }
-                developers {
-                    developer {
-                        id pbUser
-                        name pbUserId
-                        email pbEmail
+
+                pom {
+                    name = pbArtifactId
+                    url = pbSiteUrl
+                    licenses {
+                        license {
+                            name = pbLicense
+                            url = pbLicenseUrl
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = pbUser
+                            name = pbUserId
+                            email = pbEmail
+                        }
+                    }
+                    scm {
+                        connection = pbGitUrl
+                        developerConnection = pbGitUrl
+                        url = pbSiteUrl
                     }
                 }
-                scm {
-                    connection pbGitUrl
-                    developerConnection pbGitUrl
-                    url pbSiteUrl
-                }
+            }
+        }
+    }
+} else {
+    // For replugin-host-gradle and replugin-plugin-gradle
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+                artifact sourcesJar
+                artifact javadocJar
             }
         }
     }
