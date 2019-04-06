@@ -56,8 +56,10 @@ class PluginDebugger {
             apkFile = new File(apkDir, variantConfiguration.getBaseName() + File.separator + apkName)
         }
 
-        adbFile = globalScope.sdkComponents.adbExecutableProvider.get()
-
+        // sdkComponents is introduced in 3.5.0-alpha06
+        adbFile = globalScope.hasProperty('sdkComponents')
+                ? globalScope.sdkComponents.adbExecutableProvider.get()
+                : globalScope.androidBuilder.sdkInfo.adb
     }
 
     /**
