@@ -56,7 +56,7 @@ class PluginDebugger {
             apkFile = new File(apkDir, variantConfiguration.getBaseName() + File.separator + apkName)
         }
 
-        adbFile = globalScope.androidBuilder.sdkInfo.adb;
+        adbFile = globalScope.sdkComponents.adbExecutableProvider.get()
 
     }
 
